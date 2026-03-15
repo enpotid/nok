@@ -5,10 +5,17 @@ use core::panic::PanicInfo;
 
 #[unsafe(no_mangle)]
 pub extern "C" fn _start() -> ! {
+    let vga_buffer = 0xb8000 as *mut u8;
+
+    unsafe {
+        *vga_buffer = "a".as_bytes()[0];
+        *vga_buffer.offset(1) = 0xb;
+    }
+
     loop {}
 }
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     loop {}
-} 
+}
