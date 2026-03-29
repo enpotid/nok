@@ -11,20 +11,31 @@ section .text
     mov bx, 0
     mov dx, 12
 
-loop:
-    mov al, [hello + bx]
-    mov [es:bx], al
-    mov al, [hello + bx + 1]
-    mov [es:bx + 1], al
-    add bx, 2
+    lgdt[gdtr]
 
-    sub dx, 1
-    cmp dx, 0
-    jne loop
+gdtr:
+    dw gdt_end - gdt_start - 1
+    dd gdt_start
 
-    jmp $
+gdt_start:
+    dq 0x0000000000000000
 
-hello db "H", 0xb, "e", 0xb, "l", 0xb, "l", 0xb, "o", 0xb, " ", 0xb, "W", 0xb, "o", 0xb, "r", 0xb, "l", 0xb, "d", 0xb, "!", 0xb
+    ; code descriptor
+    dw 0xFFFF ; limit
+    dw 0x0000 ; base
+    db 0x00   ; base
+    db 0x9A   ; P, DPL, S, E, DC, RW, A
+    db 0xCF   ; G, DB, L, AVL, limit
+    db 0x00   ; base
+
+    ; data descriptor
+    dw 0xFFFF
+    dw 0x0000
+    db 0x00
+    db 0x92
+    db 0xCF
+    db 0x00
+gdt_end:
 
 times 510 - ($ - $$) db  0x00
 
