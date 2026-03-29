@@ -1,9 +1,12 @@
 .PHONY: all clean
 
-all: bootloader.bin
+all: boot.bin core.bin
 
-bootloader.bin: bootloader.asm
-	nasm -o bootloader.bin bootloader.asm
+boot.bin: boot.asm
+	nasm -o boot.bin boot.asm
+
+core.bin: core.asm
+	nasm -o core.bin core.asm
 
 clean:
-	rm -f bootloader.bin
+	rm -f boot.bin

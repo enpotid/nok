@@ -1,16 +1,18 @@
-[ORG 0x7C00]
+[ORG 0]
 [BITS 16]
 
-section .text
-    xor ax, ax
+    mov ax, cs
     mov ds, ax
 
     mov ax, 0xB800
     mov es, ax
+    mov [es:0], "a"
+    mov [es:1], 0xb
 
-    mov bx, 0
-    mov dx, 12
+loop:
+    jmp loop
 
+    cli
     lgdt[gdtr]
 
 gdtr:
@@ -37,7 +39,4 @@ gdt_start:
     db 0x00
 gdt_end:
 
-times 510 - ($ - $$) db  0x00
-
-db 0x55
-db 0xAA
+times 5120 - ($ - $$) db 0x00
