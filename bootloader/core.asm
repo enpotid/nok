@@ -34,7 +34,35 @@ pm_start:
     mov eax, msg_len
     call print
 
-    jmp $
+    mov edi, PML4T_ADDR
+    mov cr3, edi       ; cr3 lets the CPU know where the page tables are
+
+    xor eax, eax
+    mov ecx, SIZEOF_PAGE_TABLE
+    rep stosd          ; init 4 page tables (PML4T, PDPT, PDT, PT)
+    mov edi, cr3
+
+    mov DWORD [edi], PDPT_ADDR | PT_PRESENT | PT_READABLE ; 0x1 -> 0x1000 (in PML4E, PDPTE...)
+
+    edi, PDPT_ADDR
+    mov DWORD [edi], PDT_ADDR | PT_PRESENT | PT_READABLE
+
+    edi, PDT_ADDR
+    mov DWORD [edi], PT_ADDR | PT_PRESENT | PT_READABLE
+
+    mov edi, PT_ADDR
+    mov ebx, 0x100000 |PT_PRESENT | PT_READABLE
+    mov ecx, ENTRIES_PER_PT
+
+.set_entry:
+    mov DWORD [edi], ebx
+    add edi, SIZEOF_PT_ENTRY
+    add ebx, PAGE_SIZE
+    loop .set_entry + 0x10000
+
+    mov eax, cr4
+    or eax, CR4_PAE_ENABLE
+    mov cr4, eax
 
 print:
     push edx
@@ -82,5 +110,21 @@ msg db " _  _  _  _  _  _                                                       
     db "| .` | (_) | ' <                                                                "
     db "|_|\_|\___/|_|\_\                                                               "
 msg_len equ $ - msg
+
+ENTRIES_PER_PT equ 512
+SIZEOF_PT_ENTRY equ 8
+PAGE_SIZE equ 0x1000
+
+SIZEOF_PAGE_TABLE equ 4096
+
+PML4T_ADDR equ 0x1000
+PDPT_ADDR equ 0x2000
+PDT_ADDR equ 0x3000
+PT_ADDR equ 0x4000
+
+PT_PRESENT equ 1
+PT_READABLE equ 2
+
+CR4_PAE_ENABLE equ 1 << 5
 
 times 5120 - ($ - $$) db 0x00
