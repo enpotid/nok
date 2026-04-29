@@ -72,7 +72,6 @@ pm_start:
     lgdt [gdtr_long + 0x10000]
     jmp gdt_long_start.code:lm_start + 0x10000
 
-
 [BITS 64]
 lm_start:
     cli
