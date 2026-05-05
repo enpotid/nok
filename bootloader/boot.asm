@@ -15,7 +15,7 @@ read:
     mov bx, 0    ; es:bx = 1000:0000
 
     mov ah, 2    ; read
-    mov al, 4    ; sector count
+    mov al, 99   ; sector count
     mov ch, 0    ; cylinder number
     mov cl, 2    ; sector number
     mov dh, 0    ; head number

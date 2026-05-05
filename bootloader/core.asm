@@ -193,5 +193,3 @@ PT_PRESENT equ 1
 PT_READABLE equ 2
 
 CR4_PAE_ENABLE equ 1 << 5
-
-times 512 * 4 - ($ - $$) db 0x00
