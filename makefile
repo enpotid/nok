@@ -1,9 +1,12 @@
-.PHONY: all bootloader clean
+.PHONY: all bootloader kernel clean
 
-all: bootloader disk.img
+all: bootloader kernel disk.img
 
 bootloader:
 	make -C bootloader
+
+kernel:
+	make -C kernel
 
 disk.img: bootloader/boot.bin bootloader/core.bin kernel/kernel.bin
 	dd if=/dev/zero of=disk.img bs=512 count=100
@@ -15,4 +18,5 @@ disk.img: bootloader/boot.bin bootloader/core.bin kernel/kernel.bin
 
 clean:
 	make -C bootloader clean
+	make -C kernel clean
 	rm -f disk.img
